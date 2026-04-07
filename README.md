@@ -130,6 +130,14 @@ On the six routine scenarios, SignalClaw reaches average delay in the `7.8s to 9
 
 The event results should be interpreted as an **end-to-end system comparison**: SignalClaw uses event-aware detector-dispatch control, while the baselines are event-blind and transferred from routine traffic.
 
+<p align="center">
+  <a href="figures/fig_event_aware_summary.pdf">
+    <img src="images/fig_event_aware_summary.png" alt="Event-aware evaluation summary" width="100%">
+  </a>
+</p>
+
+The figure above summarizes the event-aware results in three views: emergency delay on `E1/E2/M1`, person-delay on `B1/B2`, and average delay across all event scenarios. The emergency and person-delay panels use log-scale y-axes for readability because the fixed-time baseline is much worse than the adaptive methods.
+
 The strongest outcomes are:
 
 - **Emergency**: `11.2s to 18.5s` emergency delay for SignalClaw, versus `42.3s to 72.3s` for MaxPressure and `78.5s to 95.3s` for DQN.
@@ -183,11 +191,15 @@ SignalClaw/
 │   ├── run_eventclaw_experiment.py
 │   └── glm5_configs/
 ├── figures/
+│   ├── data/
+│   ├── gen_fig_event_aware_summary.py
+│   └── fig_event_aware_summary.pdf
 ├── images/
 │   ├── fig_framework.png
 │   ├── fig_framework.svg
 │   ├── fig_scenarios.png
 │   ├── fig_scenarios.svg
+│   ├── fig_event_aware_summary.png
 │   ├── fig_evolution_curves.png
 │   └── src/
 ├── scenarios/
@@ -202,6 +214,7 @@ Key directories:
 
 - `evoprog/`: core evolution, evaluator, executor, LLM, and storage modules
 - `scripts/`: experiment and configuration entry points
+- `figures/`: reproducible figure scripts, data files, and paper-ready PDFs
 - `images/src/`: original paper figure sources
 - `scenarios/`: placeholder location for SUMO scenario assets
 - `tables/`: original paper table sources

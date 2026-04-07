@@ -60,8 +60,6 @@ This repository intentionally does **not** include:
   </a>
 </p>
 
-The framework image above is rendered directly from the original paper source `images/src/fig1_framework_body.tex`. Click the image for the full-resolution vector version.
-
 The framework can be read in three layers:
 
 - **Skill representation**: each evolved skill combines human-readable rationale, decision guidance, and executable code.
@@ -77,8 +75,6 @@ This design is what gives SignalClaw its main interpretability advantage over RL
     <img src="images/fig_scenarios.svg" alt="SignalClaw scenarios" width="100%">
   </a>
 </p>
-
-The scenario image above is rendered directly from `images/src/fig_scenario_overview_body.tex`. Click the image for the full-resolution vector version.
 
 The evaluation covers twelve SUMO configurations on a `4x4` arterial grid:
 

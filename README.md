@@ -4,8 +4,6 @@
 
 [中文说明](README_zh.md)
 
-This repository is organized as a lightweight public-facing codebase inspired by the presentation style of [DeepSignal](https://github.com/AIMS-Laboratory/DeepSignal), while keeping SignalClaw's own code structure and experimental artifacts.
-
 ## Overview
 
 SignalClaw studies interpretable traffic signal control with large language models used as **offline evolutionary skill generators**.
@@ -222,9 +220,6 @@ if outlane_2_num_vehicle > 5:
     value[0] -= outlane_2_num_vehicle ** 1.1
 ```
 
-## Maintainer
+## License
 
-- Owner: `Radar-Lei`
-- GitHub: `https://github.com/Radar-Lei`
-- Email: `greatradar@gmail.com`
-- License: `CC BY-NC 4.0`
+`CC BY-NC 4.0`

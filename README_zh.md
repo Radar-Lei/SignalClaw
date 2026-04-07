@@ -4,8 +4,6 @@
 
 [English README](README.md)
 
-这个仓库参考了 [DeepSignal](https://github.com/AIMS-Laboratory/DeepSignal) 的公开展示方式来组织，但保留了 SignalClaw 自己的代码结构和实验内容。
-
 ## 项目简介
 
 SignalClaw 的核心思想是：用大语言模型做**离线技能进化器**，而不是在线控制器。
@@ -213,9 +211,6 @@ if outlane_2_num_vehicle > 5:
     value[0] -= outlane_2_num_vehicle ** 1.1
 ```
 
-## 维护者
+## License
 
-- Owner: `Radar-Lei`
-- GitHub: `https://github.com/Radar-Lei`
-- Email: `greatradar@gmail.com`
-- License: `CC BY-NC 4.0`
+`CC BY-NC 4.0`

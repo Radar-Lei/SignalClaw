@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{Evolution results across routine and event scenarios. Both normal fitness (\Cref{eq:fitness}) and event fitness (\Cref{eq:event_fitness}) are shifted by scenario-dependent constants $C$ so that all values are positive (higher is better). The two objectives differ in composition and scale. \textbf{Absolute values are not cross-comparable} between normal and event rows; only the within-row improvement percentage is meaningful. All evolved with GPT-5.4, $\popsize=8$, 30 generations. The mixed scenario M1 is not listed because it uses the dispatcher to compose independently evolved emergency and incident skills (zero-shot composability test, \Cref{sec:event_eval}); no dedicated mixed skill is evolved.}
+\label{tab:main_results}
+\begin{tabular}{llrrrr}
+\toprule
+Skill & Scenarios & Initial & Best & Gen & Improv. (\%) \\
+\midrule
+Normal & T1+T2+T3 & 55.20 & 60.50 & 12 & 9.6 \\
+\midrule
+Emergency & E1+E2 & 3.15 & 3.92 & 22 & 24.4 \\
+Transit & B1+B2 & 2.88 & 3.76 & 8 & 30.6 \\
+Incident & I1 & 2.65 & 3.28 & 18 & 23.8 \\
+\bottomrule
+\end{tabular}
+\end{table}

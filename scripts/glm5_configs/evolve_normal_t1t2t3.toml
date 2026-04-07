@@ -1,0 +1,29 @@
+# SignalClaw: Normal traffic skill evolution on T1+T2+T3 with GPT-5.4-high
+# Evolves phase_selection code for routine arterial traffic.
+
+[llm]
+timeout_seconds = 120.0
+max_retries = 3
+temperature = 0.7
+
+[evolution]
+pop_size = 8
+generations = 30
+stagnation_threshold = 8
+elite_count = 2
+
+[evaluator]
+sumo_home = "/usr/share/sumo"
+decision_step_interval = 1
+weight_delay = 0.8
+weight_queue = 0.15
+weight_throughput = 0.05
+
+[store]
+store_dir = "store/gpt5_evolve/normal"
+
+scenario_dirs = [
+    "scenarios/arterial4x4_t1",
+    "scenarios/arterial4x4_t2",
+    "scenarios/arterial4x4_t3",
+]

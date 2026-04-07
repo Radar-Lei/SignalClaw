@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "signalclaw"
+version = "0.1.0"
+description = "LLM-guided evolutionary synthesis of interpretable traffic signal control skills"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "filelock>=3.16",
+    "openai>=1.0",
+    'tomli>=1.2; python_version < "3.11"',
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+    "pytest-timeout>=2.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["evoprog*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+timeout = 30

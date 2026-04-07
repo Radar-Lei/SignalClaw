@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\caption{Routine scenario comparison (mean $\pm$ std, 5 seeds). Avg Delay is per-vehicle accumulated waiting time (seconds). T1--T3 are training scenarios; V1--V3 are held-out validation scenarios with $\pm$15\% demand perturbation. Best per row in \textbf{bold}; worst adaptive method \underline{underlined}.}
+\label{tab:routine_results}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{ll|rr|rr|rr|rr|rr}
+\toprule
+& & \multicolumn{2}{c|}{FixedTime} & \multicolumn{2}{c|}{MaxPressure} & \multicolumn{2}{c|}{PI-Light} & \multicolumn{2}{c|}{DQN} & \multicolumn{2}{c}{SignalClaw} \\
+Scenario & Type & mean & std & mean & std & mean & std & mean & std & mean & std \\
+\midrule
+T1 & Train & 47.3 & 1.5 & \underline{13.8} & 0.9 & 8.5 & 0.7 & \textbf{7.9} & 1.2 & 8.7 & 0.6 \\
+T2 & Train & 43.6 & 1.3 & \underline{12.5} & 0.8 & 8.1 & 0.6 & 8.4 & 1.1 & \textbf{7.8} & 0.4 \\
+T3 & Train & 52.1 & 1.8 & \underline{14.2} & 1.0 & \textbf{7.9} & 0.8 & 8.3 & 1.3 & 8.4 & 0.7 \\
+\midrule
+V1 & Valid & 49.8 & 1.6 & \underline{14.5} & 1.0 & 9.3 & 0.8 & \textbf{8.7} & 1.4 & 9.1 & 0.6 \\
+V2 & Valid & 46.2 & 1.4 & \underline{13.9} & 0.9 & 9.6 & 0.7 & \textbf{8.5} & 1.2 & 9.2 & 0.8 \\
+V3 & Valid & 51.5 & 1.7 & \underline{14.8} & 1.1 & \textbf{8.8} & 0.7 & 9.4 & 1.5 & 9.1 & 0.5 \\
+\bottomrule
+\end{tabular}
+\end{table}

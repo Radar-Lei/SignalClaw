@@ -1,0 +1,56 @@
+# SignalClaw: Emergency skill evolution in DISPATCHER CONTEXT with GLM-5
+# The emergency skill is evolved while other skills (normal/transit/incident) stay fixed.
+# Evaluation runs within the full event dispatcher pipeline on E1+E2 scenarios.
+
+[llm]
+# GLM-5 via .env (OPENAI_BASE_URL, OPENAI_API_KEY, OPENAI_MODEL)
+timeout_seconds = 300.0
+max_retries = 5
+temperature = 0.7
+
+[evolution]
+pop_size = 6
+generations = 15
+stagnation_threshold = 5
+elite_count = 1
+dispatcher_context = true
+target_event_type = "emergency"
+
+[evaluator]
+sumo_home = "/usr/share/sumo"
+decision_step_interval = 1
+weight_delay = 0.4
+weight_queue = 0.4
+weight_throughput = 0.2
+
+[store]
+store_dir = "store/glm5_evolve/emergency_dispatcher"
+
+scenario_dirs = [
+    "scenarios/emergency_e1",
+    "scenarios/emergency_e2",
+]
+
+# Fixed skills: use evolved transit, seed skills for others
+[fixed_skills.normal]
+inlane_code = "value[0] += inlane_2_num_waiting_vehicle * 3 + inlane_2_num_vehicle"
+outlane_code = "value[0] -= outlane_2_num_vehicle * 2"
+
+[fixed_skills.transit]
+inlane_code = "value[0] += inlane_2_num_waiting_vehicle * 4 + inlane_2_num_vehicle / max(1, inlane_2_vehicle_dist)"
+outlane_code = "value[0] -= (outlane_2_num_vehicle / max(1, outlane_2_vehicle_dist)) * 2"
+
+[fixed_skills.incident]
+inlane_code = """
+if event_incident_blocked > 0:
+    value[0] += max(0, inlane_2_num_vehicle - inlane_2_num_waiting_vehicle) * 5
+else:
+    value[0] += inlane_2_num_waiting_vehicle * 3"""
+outlane_code = "value[0] -= outlane_2_num_vehicle * 0.5"
+
+[fixed_skills.congestion]
+inlane_code = """
+value[0] += inlane_2_num_waiting_vehicle ** 2
+if event_congestion_level > 1:
+    value[0] += inlane_2_num_waiting_vehicle * event_congestion_level * 2"""
+outlane_code = "value[0] += outlane_2_vehicle_dist * 0.5"

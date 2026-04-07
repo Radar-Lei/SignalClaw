@@ -7,8 +7,6 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
-from paper_plot_style import COLORS
-
 ROOT = Path(__file__).resolve().parent.parent
 DATA_PATH = ROOT / "figures" / "data" / "event_aware_metrics.csv"
 FIG_DIR = ROOT / "figures"
@@ -16,11 +14,11 @@ IMG_DIR = ROOT / "images"
 
 METHODS = ["FixedTime", "MaxPressure", "PI-Light", "DQN", "SignalClaw"]
 COLOR_MAP = {
-    "FixedTime": COLORS[7],
-    "MaxPressure": COLORS[2],
-    "PI-Light": COLORS[0],
-    "DQN": COLORS[3],
-    "SignalClaw": COLORS[1],
+    "FixedTime": "#8A8A8A",
+    "MaxPressure": "#1B9E77",
+    "PI-Light": "#4C78A8",
+    "DQN": "#C44E52",
+    "SignalClaw": "#F28E2B",
 }
 
 
@@ -84,8 +82,13 @@ def grouped_bars(ax, scenarios, means, stds, ylabel, log_scale=False):
             yerr=stds[method],
             capsize=2,
             color=COLOR_MAP[method],
-            edgecolor="black",
-            linewidth=0.35,
+            edgecolor="#FFFFFF",
+            linewidth=0.6,
+            error_kw={
+                "elinewidth": 1.0,
+                "ecolor": "#222222",
+                "capthick": 1.0,
+            },
             label=method,
         )
 
@@ -94,14 +97,18 @@ def grouped_bars(ax, scenarios, means, stds, ylabel, log_scale=False):
     ax.set_ylabel(ylabel)
     if log_scale:
         ax.set_yscale("log")
+        ax.yaxis.grid(True, which="major", color="#D9D9D9", linewidth=0.7, alpha=0.8)
     ax.spines["left"].set_linewidth(0.8)
     ax.spines["bottom"].set_linewidth(0.8)
+    ax.set_axisbelow(True)
+    if not log_scale:
+        ax.yaxis.grid(True, which="major", color="#D9D9D9", linewidth=0.7, alpha=0.8)
 
 
 def main():
     rows = load_rows()
 
-    fig, axes = plt.subplots(1, 3, figsize=(12.2, 3.6))
+    fig, axes = plt.subplots(1, 3, figsize=(12.4, 3.8))
 
     emergency_scenarios = ["E1", "E2", "M1"]
     transit_scenarios = ["B1", "B2"]
@@ -113,7 +120,7 @@ def main():
         emergency_scenarios,
         emg_means,
         emg_stds,
-        "Emergency Delay (s, log)",
+        "Emergency Delay (s)",
         log_scale=True,
     )
 
@@ -123,7 +130,7 @@ def main():
         transit_scenarios,
         person_means,
         person_stds,
-        "Person-Delay (s, log)",
+        "Person-Delay (s)",
         log_scale=True,
     )
 
@@ -149,7 +156,7 @@ def main():
         handletextpad=0.4,
     )
 
-    fig.tight_layout(rect=[0.0, 0.0, 1.0, 0.93])
+    fig.tight_layout(rect=[0.0, 0.0, 1.0, 0.92], w_pad=1.6)
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     IMG_DIR.mkdir(parents=True, exist_ok=True)
     fig.savefig(FIG_DIR / "fig_event_aware_summary.pdf", bbox_inches="tight", pad_inches=0.05)

@@ -6,19 +6,36 @@
 
 ## Overview
 
-SignalClaw studies interpretable traffic signal control with large language models used as **offline evolutionary skill generators**.
+Traffic signal control in the real world requires strategies that are both **effective** and **interpretable**. This is where many existing approaches break down:
 
-Instead of deploying a black-box neural policy, SignalClaw deploys compact executable control skills that can be:
+- deep reinforcement learning can optimize performance, but the learned policy is usually opaque and difficult to audit
+- classical program synthesis is interpretable, but often constrained by a narrow hand-crafted DSL
+- most existing methods are effectively **event-blind**, despite emergency vehicles, transit priority, incidents, and severe congestion being central to real deployment
 
-- inspected by humans
+SignalClaw addresses this gap by using large language models as **offline evolutionary skill generators** and deploying only compact executable traffic-control code inside SUMO.
+
+Instead of shipping a black-box neural policy, SignalClaw evolves **self-documenting skills** that can be:
+
+- inspected by traffic engineers
 - audited and versioned
-- edited without retraining a neural controller
+- modified without retraining a neural controller
+- specialized for different event contexts and composed at runtime
 
-Each evolved skill contains:
+Each skill contains:
 
 - a strategy description
 - a selection guidance block
 - executable scoring code
+
+## Why SignalClaw
+
+SignalClaw is not just "LLM writes code for TSC". Its main advantages, as established in the paper, are:
+
+- **Signal-driven evolution**: queue, delay, throughput, and stagnation statistics are distilled into structured evolution signals, then translated into natural-language feedback for the next generation.
+- **Self-documenting policy artifacts**: the evolved unit is not a bare snippet but a structured skill with rationale, decision guidance, and executable code.
+- **Event-driven compositional control**: emergency, incident, transit, congestion, and normal skills are evolved separately and composed by a deterministic priority dispatcher.
+- **Deployment-ready determinism**: the LLM is used offline during evolution only; the deployed controller is plain code with predictable runtime behavior.
+- **Zero-shot mixed-event composition**: independently evolved event skills can be composed on mixed scenarios without retraining.
 
 ## Repository Scope
 
@@ -38,36 +55,50 @@ This repository intentionally does **not** include:
 ## Framework
 
 <p align="center">
-  <img src="images/fig_framework.png" alt="SignalClaw framework" width="920">
+  <a href="images/fig_framework.svg">
+    <img src="images/fig_framework.svg" alt="SignalClaw framework" width="100%">
+  </a>
 </p>
 
-The framework figure above is rendered directly from the original paper source `images/src/fig1_framework.tex`, not from a screenshot.
+The framework image above is rendered directly from the original paper source `images/src/fig1_framework_body.tex`. Click the image for the full-resolution vector version.
 
-SignalClaw follows a four-stage loop:
+The framework can be read in three layers:
 
-1. `Generate`: the LLM synthesizes candidate skills from the current elite and structured guidance.
-2. `Test`: candidate skills are executed in SUMO.
-3. `Evolve`: simulation metrics are translated into evolution signals.
-4. `Solidify`: the best skill is archived and reused as the next-generation seed.
+- **Skill representation**: each evolved skill combines human-readable rationale, decision guidance, and executable code.
+- **Evolution loop**: `Generate -> Test -> Evolve -> Solidify`.
+- **Feedback mechanism**: simulation outcomes are converted into signals such as high queue, high delay, low throughput, and stagnation, which steer the next LLM mutation step.
+
+This design is what gives SignalClaw its main interpretability advantage over RL and its structural flexibility advantage over fixed DSL search.
 
 ## Scenarios
 
 <p align="center">
-  <img src="images/fig_scenarios.png" alt="SignalClaw scenarios" width="920">
+  <a href="images/fig_scenarios.svg">
+    <img src="images/fig_scenarios.svg" alt="SignalClaw scenarios" width="100%">
+  </a>
 </p>
 
-The scenario figure above is rendered directly from `images/src/fig_scenario_overview.tex`.
+The scenario image above is rendered directly from `images/src/fig_scenario_overview_body.tex`. Click the image for the full-resolution vector version.
 
-The paper evaluates:
+The evaluation covers twelve SUMO configurations on a `4x4` arterial grid:
 
-- routine scenarios: `T1`, `T2`, `T3`
-- validation scenarios: `V1`, `V2`, `V3`
-- emergency scenarios: `E1`, `E2`
-- transit scenarios: `B1`, `B2`
-- incident scenario: `I1`
-- mixed-event scenario: `M1`
+- **Routine training**: `T1`, `T2`, `T3`
+- **Routine validation**: `V1`, `V2`, `V3`, created with demand perturbations
+- **Emergency**: `E1`, `E2`, testing ambulance preemption under different frequencies
+- **Transit**: `B1`, `B2`, testing bus-priority behavior under passenger-weighted delay
+- **Incident**: `I1`, testing response to a blocked lane
+- **Mixed event**: `M1`, testing zero-shot composition under emergency plus incident
+
+This scenario design is important: SignalClaw is evaluated not only on routine traffic, but also on sparse and safety-critical event conditions where event-blind policies usually fail.
 
 ## Key Results
+
+The paper supports four main empirical claims:
+
+- On routine traffic, SignalClaw stays within `3% to 10%` of the best method per scenario while maintaining low variance across seeds.
+- On emergency scenarios, SignalClaw achieves the **lowest emergency delay** among all compared methods.
+- On transit scenarios, SignalClaw achieves the **lowest person-delay**, which better reflects passenger-level social cost than vehicle-level delay.
+- On mixed scenarios, independently evolved event skills compose correctly through the priority dispatcher without retraining.
 
 ### Evolution Improvement
 
@@ -84,7 +115,11 @@ The paper evaluates:
   <img src="images/fig_evolution_curves.png" alt="Evolution curves" width="860">
 </p>
 
+Across 30 generations, the normal skill improves from `55.20` to `60.50` fitness, while the event-specialized skills improve by `23.8% to 30.6%` depending on scenario type.
+
 ### Routine Traffic Performance
+
+On the six routine scenarios, SignalClaw reaches average delay in the `7.8s to 9.2s` range and remains competitive with PI-Light and DQN while preserving full interpretability.
 
 | Scenario | Type | FixedTime | MaxPressure | PI-Light | DQN | SignalClaw |
 |---|---|---:|---:|---:|---:|---:|
@@ -96,6 +131,14 @@ The paper evaluates:
 | V3 | Valid | 51.5 ± 1.7 | 14.8 ± 1.1 | **8.8 ± 0.7** | 9.4 ± 1.5 | 9.1 ± 0.5 |
 
 ### Event-Aware Evaluation
+
+The event results should be interpreted as an **end-to-end system comparison**: SignalClaw uses event-aware detector-dispatch control, while the baselines are event-blind and transferred from routine traffic.
+
+The strongest outcomes are:
+
+- **Emergency**: `11.2s to 18.5s` emergency delay for SignalClaw, versus `42.3s to 72.3s` for MaxPressure and `78.5s to 95.3s` for DQN.
+- **Transit**: `9.8s to 11.5s` person-delay for SignalClaw, versus `38.7s to 45.2s` for MaxPressure.
+- **Mixed event**: best emergency delay on `M1` while maintaining stable overall traffic delay.
 
 | Scenario | Method | Avg Delay | Emergency Delay | Person-Delay | Queue |
 |---|---|---:|---:|---:|---:|
@@ -146,7 +189,9 @@ SignalClaw/
 ├── figures/
 ├── images/
 │   ├── fig_framework.png
+│   ├── fig_framework.svg
 │   ├── fig_scenarios.png
+│   ├── fig_scenarios.svg
 │   ├── fig_evolution_curves.png
 │   └── src/
 ├── scenarios/

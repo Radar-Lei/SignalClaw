@@ -1,0 +1,112 @@
+\begin{tikzpicture}[
+    scale=0.82, transform shape,
+    % === Box styles ===
+    bluebox/.style={rectangle, draw=blue!70, fill=blue!8!white, rounded corners=4pt,
+        minimum width=2.5cm, minimum height=1.0cm, align=center, font=\small,
+        line width=0.8pt},
+    greenbox/.style={rectangle, draw=green!60!black, fill=green!8!white, rounded corners=4pt,
+        minimum width=2.5cm, minimum height=1.0cm, align=center, font=\small,
+        line width=0.8pt},
+    redbox/.style={rectangle, draw=red!60!black, fill=red!8!white, rounded corners=4pt,
+        minimum width=2.5cm, minimum height=1.0cm, align=center, font=\small,
+        line width=0.8pt},
+    tealbox/.style={rectangle, draw=teal!70, fill=teal!8!white, rounded corners=4pt,
+        minimum width=2.5cm, minimum height=1.0cm, align=center, font=\small,
+        line width=0.8pt},
+    graybox/.style={rectangle, draw=gray!70, fill=gray!8!white, rounded corners=4pt,
+        minimum width=2.5cm, minimum height=1.0cm, align=center, font=\small,
+        line width=0.8pt},
+    skillbox/.style={rectangle, draw=orange!70!black, fill=orange!12!white, rounded corners=3pt,
+        minimum width=3.2cm, minimum height=0.7cm, align=center, font=\scriptsize,
+        line width=0.6pt, dashed},
+    signalbox/.style={rectangle, draw=red!60!black, fill=red!6!white, rounded corners=3pt,
+        minimum width=2.5cm, minimum height=0.5cm, align=center, font=\scriptsize,
+        line width=0.6pt},
+    llmbox/.style={rectangle, draw=purple!60, fill=purple!6!white, rounded corners=4pt,
+        minimum width=3.0cm, minimum height=1.0cm, align=center, font=\small,
+        line width=0.8pt},
+    % === Arrow styles ===
+    arrow/.style={-{Stealth[length=5pt]}, line width=0.7pt, color=black!70},
+    bluearrow/.style={-{Stealth[length=5pt]}, line width=0.9pt, color=blue!70},
+    greenarrow/.style={-{Stealth[length=5pt]}, line width=0.9pt, color=green!50!black},
+    redarrow/.style={-{Stealth[length=5pt]}, line width=0.9pt, color=red!60!black},
+    tealarrow/.style={-{Stealth[length=5pt]}, line width=0.9pt, color=teal!70},
+    grayarrow/.style={-{Stealth[length=5pt]}, line width=0.9pt, color=gray!70},
+    purplearrow/.style={-{Stealth[length=5pt]}, line width=0.9pt, color=purple!70},
+    orangearrow/.style={-{Stealth[length=5pt]}, line width=0.9pt, color=orange!70!black},
+    labelstyle/.style={font=\scriptsize\itshape, color=black!60},
+]
+
+\node[rectangle, draw=orange!70!black, fill=orange!5!white, rounded corners=5pt,
+    minimum width=3.6cm, minimum height=5.0cm, line width=1.0pt,
+    label={[font=\small\bfseries, orange!70!black]above:Evolved Skill}]
+    (skillgroup) at (-5.5, 1.75) {};
+
+\node[skillbox] (sdesc) at (-5.5, 3.2) {\textbf{Strategy Description}\\``Prioritize saturated queues''};
+\node[skillbox] (sguid) at (-5.5, 2.0) {\textbf{Selection Guidance}\\Queue-aware conditional logic};
+\node[skillbox, minimum height=1.0cm] (scode) at (-5.5, 0.5) {\textbf{Executable Code}\\
+    \texttt{\scriptsize if waiting > 5:}\\
+    \texttt{\scriptsize \ \ value[0] += waiting*dist}};
+
+\draw[arrow, orange!60!black] (sdesc) -- (sguid);
+\draw[arrow, orange!60!black] (sguid) -- (scode);
+
+\node[llmbox] (llm) at (2.5, 6.5) {\textbf{LLM Backbone}\\(GPT-5.4)};
+
+\node[bluebox] (generate) at (0.0, 3.5) {\textbf{Generate}\\LLM synthesizes\\candidate skills};
+\node[greenbox] (test) at (5.0, 3.5) {\textbf{Test}\\AST validation +\\SUMO evaluation};
+\node[redbox] (evolve) at (5.0, 0.0) {\textbf{Evolve}\\Rank \& extract\\evolution signals};
+\node[tealbox] (solidify) at (0.0, 0.0) {\textbf{Solidify}\\Archive best skills\\as Capsules};
+
+\draw[bluearrow] (generate) -- node[above, labelstyle] {candidates} (test);
+\draw[greenarrow] (test) -- node[right, labelstyle, xshift=2pt] {fitness scores} (evolve);
+\draw[redarrow] (evolve) -- node[below, labelstyle] {elite + signals} (solidify);
+\draw[tealarrow] (solidify) -- node[left, labelstyle, xshift=-2pt] {seed next gen} (generate);
+
+\node[font=\footnotesize\bfseries, color=black!40] at (2.5, 1.75) {Generation $g$};
+
+\draw[purplearrow, <->] (llm.south west) -- node[left, labelstyle, xshift=-3pt, align=right] {
+    prompt: elite skill\\+ signals + hints\\$\rightarrow$ new skills} (generate.north);
+
+\draw[orangearrow] (skillgroup.east) -- node[above, labelstyle] {elite skill} (generate.west);
+
+\node[graybox, minimum width=3.0cm, minimum height=1.2cm] (sumo) at (8.5, 1.75)
+    {\textbf{SUMO Simulator}\\12 scenarios\\$\times$ 16 intersections};
+
+\draw[greenarrow, rounded corners=4pt] (test.east) -- ++(0.4, 0)
+    |- node[right, labelstyle, pos=0.65] {run sim} (sumo.north west);
+
+\draw[grayarrow, rounded corners=4pt] (sumo.south west)
+    |- node[below, labelstyle, pos=0.4, align=center] {delay, queue,\\throughput} (evolve.east);
+
+\node[rectangle, draw=red!50!black, fill=red!4!white, rounded corners=5pt,
+    minimum width=3.0cm, minimum height=3.0cm, line width=0.8pt,
+    label={[font=\small\bfseries, red!50!black]above:Evolution Signals}]
+    (siggroup) at (8.5, -1.7) {};
+
+\node[signalbox] (sig1) at (8.5, -0.7) {\texttt{high\_queue}: queue $>$ P75};
+\node[signalbox] (sig2) at (8.5, -1.35) {\texttt{high\_delay}: delay $>$ P75};
+\node[signalbox] (sig3) at (8.5, -2.0) {\texttt{low\_throughput} $<$ P25};
+\node[signalbox] (sig4) at (8.5, -2.65) {\texttt{force\_innovation}};
+
+\draw[redarrow, rounded corners=4pt] (evolve.south) -- ++(0, -1.2)
+    -- node[below, labelstyle] {metrics} (siggroup.west);
+
+\node[rectangle, draw=red!40, fill=yellow!8!white, rounded corners=3pt,
+    minimum width=3.0cm, minimum height=0.75cm, align=center, font=\scriptsize,
+    line width=0.6pt] (nl) at (8.5, -4.2) {\textbf{NL Translation}\\``Reduce queue buildup,\\try different structure''};
+
+\draw[arrow, red!50] (siggroup.south) -- (nl.north);
+
+\draw[redarrow, rounded corners=6pt] (nl.east) -- ++(1.0, 0)
+    -- ++(0, 10.7) -- node[above, labelstyle, pos=0.7] {evolution direction} (llm.east);
+
+\node[graybox, minimum width=3.2cm] (assets) at (-2.5, -2.5) {\textbf{Asset Store}\\Skills, Capsules,\\Events (JSONL)};
+
+\draw[arrow, rounded corners=4pt] (solidify.south west) -- ++(0, -0.8)
+    -| node[left, labelstyle, pos=0.7] {archive} (assets.north);
+
+\draw[arrow, dashed, rounded corners=4pt] (assets.east) -- ++(1.5, 0)
+    |- node[right, labelstyle, pos=0.3] {lineage} (solidify.south east);
+
+\end{tikzpicture}

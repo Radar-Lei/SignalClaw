@@ -168,7 +168,7 @@ Key directories:
 ## Quick Start
 
 ```bash
-git clone https://github.com/Radar-Lei/SignalClaw.git
+git clone <repository-url>
 cd SignalClaw
 pip install -e .
 python main.py --help

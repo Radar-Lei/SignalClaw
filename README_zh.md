@@ -267,3 +267,16 @@ if outlane_2_num_vehicle > 5:
 ## License
 
 `CC BY-NC 4.0`
+
+## 引用
+
+如果这项工作对你的研究有帮助，请引用：
+
+```bibtex
+@article{lei2026signalclaw,
+  title={SignalClaw: LLM-Guided Evolutionary Synthesis of Interpretable Traffic Signal Control Skills},
+  author={Lei, Da and Xiao, Feng and Li, Lu and Liu, Yuzhan},
+  journal={arXiv preprint arXiv:2604.05535},
+  year={2026}
+}
+```
